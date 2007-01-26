@@ -12,7 +12,7 @@ use English qw( -no_match_vars ) ;
 use Sub::Exporter -setup => { exports => [ qw(carp cluck croak confess UseLongMessage) ] } ;
     
 use vars qw ($VERSION);
-$VERSION = 0.01;
+$VERSION = 0.02;
 
 #-------------------------------------------------------------------------------
 
