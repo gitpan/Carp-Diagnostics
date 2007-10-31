@@ -1,2 +1,7 @@
+0.03
+	CHANGED: possibility to call the functions with a single argument
+	CHANGED: podification always on
+	CHANGED: accept call without arguments
+
 0.02
 	ADDED: test file to the manifest (oops!)

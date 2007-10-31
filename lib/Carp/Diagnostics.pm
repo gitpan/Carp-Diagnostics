@@ -12,7 +12,7 @@ use English qw( -no_match_vars ) ;
 use Sub::Exporter -setup => { exports => [ qw(carp cluck croak confess UseLongMessage) ] } ;
     
 use vars qw ($VERSION);
-$VERSION = 0.02;
+$VERSION = 0.03 ;
 
 #-------------------------------------------------------------------------------
 
@@ -106,13 +106,46 @@ cryptic messages at run time that the user have to lookup in the documentation? 
 diagnostics grouped far from where the errors are generated, they never get updated.
 
 This modules implements the four subs exported by the Carp module (carp, croak, cluck, confess). The new
-sub take two arguments, a short messages and a long messages. B<Carp> is used internally so you get an almost
-identical functionality.
+subs take zero, one or two arguments.
+
+=head2 No argument
+
+=over 2
+
+=item * No message
+
+=back
+
+=head2 One argument
+
+=over 2
+
+=item * A message
+
+=back
+
+=head2 Two arguments
+
+=over 2
+
+=item * A short message
+
+=item * A diagnostic message
 
 The long message is a diagnostic and is the one normally displayed.
 
 You can direct B<Carp::Diagnostics> to display the short message; this is useful when developing modules.
-You, the module author, understand short warnings.
+You, the module author, understand short warnings. See L<UseLongMessage>.
+
+=back
+
+Having the possibility to pass one argument or two gives you the possibility to drop-in B<Car::Diagnostics> in your module
+without having to modify all the call to the carping subs. if you decide to add Diagnostics to any of your subs, just add the
+second argument to, your already existing, carp call. 
+
+The I<podification> functionality is always on.
+
+B<Carp> is used internally so you get an identical functionality.
 
 =head2 POD: Eating your cake and having it too.
 
@@ -171,7 +204,8 @@ sub UseLongMessage
 =head2 UseLongMessage
 
 Give I<0> as argument if you want to display the short message. The only reason to use this
-is when developing modules which use B<Carp::Diagnostics>. And even then it's not a very good reason.
+is when developing modules which use B<Carp::Diagnostics>. Even then it's not a very good reason
+for not displaying a complete diagnostic.
 
 This setting is global.
 
@@ -207,7 +241,17 @@ Calls Carp::croak to display the message.
 =cut
 
 local $Carp::CarpLevel = 1; ## no critic
-Carp::croak( UseLongMessage() ? Podify($_[1]) : $_[0]) ;
+
+Carp::croak
+	(
+	Podify
+		(
+		@_ == 1 || (! UseLongMessage()) 
+			? $_[0] # user wants short message or there is only one message
+			: $_[1]
+		)
+	) ;
+
 
 return ;
 }
@@ -236,7 +280,15 @@ Calls Carp::confess to display the message.
 =cut
 
 local $Carp::CarpLevel = 1; ## no critic
-Carp::confess( UseLongMessage() ? Podify($_[1]) : $_[0]) ;
+Carp::confess
+	(
+	Podify
+		(
+		@_ == 1 || (! UseLongMessage()) 
+			? $_[0] # user wants short message or there is only one message
+			: $_[1]
+		)
+	) ;
 
 return ;
 }
@@ -265,7 +317,15 @@ Calls Carp::carp to display the message.
 =cut
 
 local $Carp::CarpLevel = 1; ## no critic
-Carp::carp( UseLongMessage() ? Podify($_[1]) : $_[0]) ;
+Carp::carp
+	(
+	Podify
+		(
+		@_ == 1 || (! UseLongMessage()) 
+			? $_[0] # user wants short message or there is only one message
+			: $_[1]
+		)
+	) ;
 
 return ;
 }
@@ -294,7 +354,15 @@ Calls Carp::cluck to display the message.
 =cut
 
 local $Carp::CarpLevel = 1; ## no critic
-Carp::cluck( UseLongMessage() ? Podify($_[1]) : $_[0]) ;
+Carp::cluck
+	(
+	Podify
+		(
+		@_ == 1 || (! UseLongMessage()) 
+			? $_[0] # user wants short message or there is only one message
+			: $_[1]
+		)
+	) ;
 
 return ;
 }
@@ -312,19 +380,26 @@ This is used internally by this module.
 
 =cut
 
-my ($long) = @_ ;
+my ($message) = @_ ;
 
-if($long =~ /\A\s*^=/xsm)
+if(defined $message)
 	{
-	my ($in, $out) = (IO::String->new($long), IO::String->new());
+	if($message =~ /\A\s*^=/xsm)
+		{
+		my ($in, $out) = (IO::String->new($message), IO::String->new());
 
-	Pod::Text->new (width => GetTerminalWidth() - 2 )->parse_from_filehandle($in, $out) ;
-	
-	return(${$out->string_ref()}) ;
+		Pod::Text->new (width => GetTerminalWidth() - 2 )->parse_from_filehandle($in, $out) ;
+		
+		return(${$out->string_ref()}) ;
+		}
+	else
+		{
+		return($message) ;
+		}
 	}
 else
 	{
-	return($long) ;
+	return ;
 	}
 }
 
