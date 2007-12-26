@@ -230,7 +230,6 @@ my $build = $class->new
 		'Test::Perl::Critic' => 0,
 		'Test::Pod' => 0,
 		'Test::Pod::Coverage' => 0,
-		'Test::Spelling' => 0,
 		'Test::Strict' => 0,
 		},
 		

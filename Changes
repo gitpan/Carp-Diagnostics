@@ -1,3 +1,6 @@
+0.04
+	CHANGED: switched from Test::Spelling to Documentation::PodSpelling
+	
 0.03
 	CHANGED: possibility to call the functions with a single argument
 	CHANGED: podification always on
