@@ -10,13 +10,15 @@ try_me.pl
 
 lib/Carp/Diagnostics.pm
 
-t/000_dependencies.t
-t/000_distribution.t
-t/000_kwalitee.t
 t/001_load.t
-t/002_1_pod.t
-t/002_2_pod_coverage.t
-t/003_perl_critic.t
 t/004_diagnostics.t
 t/005_arguments.t
-t/perlcriticrc
+
+xt/author/000_strict.t
+xt/author/000_dependencies.t
+xt/author/000_distribution.t
+xt/author/000_kwalitee.t
+xt/author/002_1_pod.t
+xt/author/002_2_pod_coverage.t
+xt/author/003_perl_critic.t
+xt/author/perlcriticrc
